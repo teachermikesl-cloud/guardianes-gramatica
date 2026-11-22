@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11142f">
+  <meta name="description" content="Guardianes de la Gramática: un juego original para practicar Lengua en 5.º y 6.º de Primaria, en solitario, equipos o toda la clase.">
+  <title>Guardianes de la Gramática · Teacher MikeSL</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="data.js" defer></script>
+  <script src="audio.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="topbar">
+      <button id="homeButton" class="logo" type="button" aria-label="Volver a inicio"><span class="logo-mark">✦</span><span>GUARDIANES <b>DE LA GRAMÁTICA</b></span></button>
+      <div class="top-actions"><span class="level-label">5.º · 6.º PRIMARIA</span><button class="round-button" id="soundButton" type="button" aria-label="Activar música y sonidos" title="Activar música y sonidos">♫</button><button class="round-button" id="helpButton" type="button" aria-label="Cómo se juega" title="Cómo se juega">?</button></div>
+    </header>
+    <main id="app"></main>
+    <footer class="footer"><span>Creado por <strong>Teacher MikeSL</strong></span><span>Tu progreso se guarda únicamente en este dispositivo</span></footer>
+  </div>
+  <dialog id="helpDialog">
+    <form method="dialog"><button class="dialog-close" aria-label="Cerrar">×</button></form>
+    <span class="overline">MANUAL DEL GUARDIÁN</span><h2>Cómo se juega</h2>
+    <p>Elige una zona, selecciona el modo y derrota al dragón de tinta respondiendo retos. Hay tres tipos: elegir una opción, seleccionar varias palabras y ordenar una frase.</p>
+    <p>Cada acierto hace daño al dragón. Los errores muestran una explicación para aprender y podrás repasarlos al terminar. En equipos, la pantalla indica de quién es el turno.</p>
+    <p>La música y los efectos están apagados al principio: pulsa ♫ para activarlos. Las teclas 1–4 sirven en los retos de elección; Intro avanza tras responder.</p>
+    <p class="muted">No se solicitan nombres ni cuentas. El progreso se guarda solo en el navegador de este dispositivo.</p>
+  </dialog>
+</body>
+</html>
