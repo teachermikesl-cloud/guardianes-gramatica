@@ -1,17 +1,51 @@
-// Música y efectos sintetizados en el navegador: no se descargan pistas externas.
+// Banda sonora original sintetizada con Web Audio. No utiliza pistas externas.
 const gameAudio=(()=>{
-  let ctx, enabled=false, timer=null, step=0, nextTime=0;
-  const bpm=112, beat=60/bpm, notes=[
-    [146.83,174.61,220.00], // Re menor
-    [116.54,146.83,174.61], // Si bemol mayor
-    [130.81,174.61,220.00], // Fa mayor
-    [130.81,164.81,196.00]  // Do mayor
-  ];
-  function context(){if(!ctx)ctx=new (window.AudioContext||window.webkitAudioContext)();return ctx}
-  function tone(freq,time,length,type='triangle',gain=.035){const c=context(),osc=c.createOscillator(),amp=c.createGain(),filter=c.createBiquadFilter();osc.type=type;osc.frequency.setValueAtTime(freq,time);filter.type='lowpass';filter.frequency.value=1800;amp.gain.setValueAtTime(.0001,time);amp.gain.exponentialRampToValueAtTime(gain,time+.025);amp.gain.exponentialRampToValueAtTime(.0001,time+length);osc.connect(filter).connect(amp).connect(c.destination);osc.start(time);osc.stop(time+length+.02)}
-  function drum(time,low=false){const c=context(),dur=low?.17:.08,buffer=c.createBuffer(1,Math.ceil(c.sampleRate*dur),c.sampleRate),data=buffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*(1-i/data.length);const source=c.createBufferSource(),filter=c.createBiquadFilter(),amp=c.createGain();buffer.copyToChannel(data,0);source.buffer=buffer;filter.type=low?'lowpass':'highpass';filter.frequency.value=low?260:4000;amp.gain.value=low?.055:.018;source.connect(filter).connect(amp).connect(c.destination);source.start(time)}
-  function schedule(){const c=context();while(nextTime<c.currentTime+.24){const bar=Math.floor(step/8)%4,part=step%8,chord=notes[bar];if(part===0){tone(chord[0]/2,nextTime,beat*3.7,'sawtooth',.018);tone(chord[0],nextTime,beat*2.6,'triangle',.012);drum(nextTime,true)}if(part===4)drum(nextTime,true);if(part===2||part===6)drum(nextTime,false);tone(chord[[0,1,2,1,0,2,1,2][part]]*2,nextTime,beat*.35,'triangle',.012);if(part===0||part===4)tone(chord[2]*2,nextTime,beat*1.6,'sine',.008);step++;nextTime+=beat/2}}
-  async function setEnabled(value){enabled=value;if(enabled){try{await context().resume();step=0;nextTime=ctx.currentTime+.05;schedule();timer=setInterval(schedule,70);effect('open')}catch{enabled=false}}else if(timer){clearInterval(timer);timer=null}return enabled}
-  function effect(kind){if(!enabled)return;const c=context(),t=c.currentTime+.01;try{if(kind==='good'){tone(523.25,t,.18,'triangle',.09);tone(783.99,t+.08,.25,'triangle',.07);tone(1046.5,t+.17,.37,'sine',.06)}else if(kind==='bad'){tone(220,t,.15,'sawtooth',.055);tone(164.81,t+.12,.28,'triangle',.045)}else if(kind==='win'){[392,523.25,659.25,783.99,1046.5].forEach((n,i)=>tone(n,t+i*.12,.5,'triangle',.08));drum(t,true)}else if(kind==='attack'){tone(294,t,.09,'sawtooth',.05);tone(392,t+.07,.17,'triangle',.05)}else if(kind==='open'){tone(440,t,.12,'triangle',.04);tone(659.25,t+.09,.2,'sine',.04)}}catch{}}
-  return{setEnabled,effect,isEnabled:()=>enabled};
+ let ctx,master,timer,enabled=false,scene='menu',step=0,next=0,volume=.48;
+ const roots={menu:[146.83,116.54,130.81,130.81],battle:[146.83,130.81,116.54,110],boss:[146.83,138.59,130.81,116.54],victory:[174.61,196,220,261.63]};
+ const bpm={menu:98,battle:126,boss:146,victory:112};
+ function context(){if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)();master=ctx.createGain();master.gain.value=volume;master.connect(ctx.destination)}return ctx}
+ function tone(freq,time,duration,type='triangle',gain=.06){
+  const c=context(),osc=c.createOscillator(),env=c.createGain(),filter=c.createBiquadFilter();
+  osc.type=type;osc.frequency.setValueAtTime(freq,time);filter.type='lowpass';filter.frequency.value=type==='sawtooth'?1200:3400;
+  env.gain.setValueAtTime(.0001,time);env.gain.exponentialRampToValueAtTime(gain,time+.018);env.gain.exponentialRampToValueAtTime(.0001,time+duration);
+  osc.connect(filter).connect(env).connect(master);osc.start(time);osc.stop(time+duration+.03)
+ }
+ function drum(time,kind){
+  const c=context(),duration=kind==='kick'?.22:.09,buffer=c.createBuffer(1,Math.ceil(c.sampleRate*duration),c.sampleRate),data=buffer.getChannelData(0);
+  for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/data.length,kind==='kick'?2:3);
+  const src=c.createBufferSource(),filter=c.createBiquadFilter(),gain=c.createGain();src.buffer=buffer;
+  filter.type=kind==='kick'?'lowpass':'highpass';filter.frequency.value=kind==='kick'?170:kind==='snare'?1300:5300;
+  gain.gain.value=kind==='kick'?.16:kind==='snare'?.055:.021;src.connect(filter).connect(gain).connect(master);src.start(time)
+ }
+ function schedule(){
+  if(!enabled)return;const c=context(),beat=60/bpm[scene],rootList=roots[scene];
+  while(next<c.currentTime+.3){
+   const part=step%16,bar=Math.floor(step/16)%4,root=rootList[bar],t=next;
+   if(part===0){tone(root/2,t,beat*7.5,'sawtooth',scene==='menu'?.027:.053);tone(root,t,beat*6,'triangle',.018)}
+   if(part%4===0)drum(t,'kick');
+   if(part%4===2)drum(t,'snare');
+   if(scene!=='menu'&&part%2===1)drum(t,'hat');
+   if(part%2===0)tone(root/2*(part===6?1.5:1),t,beat*.8,'sawtooth',scene==='boss'?.055:.035);
+   const motif=[0,2,4,2,0,4,5,4,2,0,4,5,7,5,4,2],scale=[1,1.125,1.2,1.333,1.5,1.6,1.8,2];
+   if(part%2===0||scene==='boss')tone(root*2*scale[motif[part]],t,beat*(scene==='menu'?.7:.4),'triangle',scene==='menu'?.022:.04);
+   if((scene==='boss'||scene==='victory')&&part%4===0){tone(root*3,t,beat*1.7,'sine',.021);tone(root*4,t,beat*1.7,'sine',.013)}
+   step++;next+=beat/2
+  }
+ }
+ async function setEnabled(value){
+  if(value===enabled)return enabled;
+  if(value){try{await context().resume();enabled=true;step=0;next=ctx.currentTime+.05;schedule();timer=setInterval(schedule,75)}catch{enabled=false}}
+  else{enabled=false;clearInterval(timer);timer=null}
+  return enabled
+ }
+ function setScene(value){if(!roots[value]||scene===value)return;scene=value;if(enabled){step=0;next=context().currentTime+.12}}
+ function setVolume(value){volume=Math.max(0,Math.min(1,value));if(master)master.gain.setTargetAtTime(volume,context().currentTime,.04)}
+ function effect(kind){
+  if(!enabled)return;const t=context().currentTime+.02;
+  if(kind==='good'){tone(523.25,t,.14,'triangle',.1);tone(783.99,t+.08,.23,'triangle',.08)}
+  if(kind==='bad'){tone(220,t,.16,'sawtooth',.07);tone(164.81,t+.12,.25,'triangle',.05)}
+  if(kind==='win'){[392,523.25,659.25,783.99,1046.5].forEach((n,i)=>tone(n,t+i*.11,.45,'triangle',.09));drum(t,'kick')}
+  if(kind==='open'){tone(440,t,.14,'triangle',.055);tone(659.25,t+.1,.2,'sine',.05)}
+ }
+ return {setEnabled,setScene,setVolume,effect,isEnabled:()=>enabled}
 })();
