@@ -213,7 +213,7 @@ function getQuestionBank(zoneId,level){
  }
  const extra=(level==='maestro'?HARD[zoneId]:EXTRA[zoneId]).map((row,i)=>toChoice(zoneId,row,i,level));
  const base=z.questions.map((q,i)=>{
-  if(level==='aprendiz'&&q.type==='choice'){
+  if(level==='aprendiz'&&(q.type==='choice'||q.type==='fill')){
    const wrong=(q.answer+1)%q.options.length,pair=i%2?[wrong,q.answer]:[q.answer,wrong];
    return {...q,id:`${zoneId}-${level}-original-${i}`,options:pair.map(j=>q.options[j]),answer:pair.indexOf(q.answer),hint:HINTS[zoneId]};
   }

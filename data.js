@@ -2,6 +2,7 @@
 const choice=(id,prompt,options,answer,explain)=>({id,type:'choice',prompt,options,answer,explain});
 const multi=(id,prompt,options,answer,explain)=>({id,type:'multi',prompt,options,answer,explain});
 const build=(id,prompt,words,explain)=>({id,type:'build',prompt,words,answer:words.join(' '),explain});
+const fill=(id,prompt,options,answer,explain)=>({id,type:'fill',prompt,options,answer,explain});
 
 const ZONES=[
  {id:'nombres',name:'El bosque de los nombres',short:'Los nombres',icon:'🌳',label:'ZONA 1',color:'#36bc8f',start:'#167d76',end:'#244d84',description:'Comunes, propios, individuales, colectivos, concretos y abstractos.',questions:[
@@ -14,7 +15,9 @@ const ZONES=[
   choice('n07','¿Qué pareja contiene solo nombres comunes?',['Luna y Marta','río y puente','Sevilla y río','Marta y puente'],1,'«Río» y «puente» nombran seres u objetos de una clase, no individuos concretos.'),
   choice('n08','«Archipiélago» es colectivo porque nombra…',['una sola isla','un conjunto de islas','una emoción','un nombre propio'],1,'Un archipiélago reúne varias islas.'),
   multi('n09','Selecciona todos los nombres abstractos.',['amistad','mesa','valentía','zapato'],[0,2],'«Amistad» y «valentía» son ideas o cualidades.'),
-  build('n10','Ordena una oración con un nombre colectivo.',['La','manada','cruzó','el','valle.'],'«Manada» nombra un conjunto de animales.')
+  build('n10','Ordena una oración con un nombre colectivo.',['La','manada','cruzó','el','valle.'],'«Manada» nombra un conjunto de animales.'),
+  fill('n11','Completa: «La ___ es un sentimiento».',['alegría','mesa','montaña','ventana'],0,'«Alegría» es un nombre abstracto que expresa un sentimiento.'),
+  build('n12','Ordena una oración con un nombre propio.',['Málaga','está','junto','al','mar.'],'«Málaga» es un nombre propio y comienza con mayúscula.')
  ]},
  {id:'adjetivos',name:'La ciudad de los detalles',short:'Adjetivos y determinantes',icon:'🏙️',label:'ZONA 2',color:'#ffd46b',start:'#9f6a21',end:'#7f3b81',description:'Grados del adjetivo, artículos, demostrativos, posesivos y numerales.',questions:[
   choice('a01','En «El castillo antiguo destaca», ¿cuál es el adjetivo?',['El','castillo','antiguo','destaca'],2,'«Antiguo» expresa una cualidad de «castillo».'),
@@ -26,7 +29,9 @@ const ZONES=[
   choice('a07','¿Qué determinante expresa orden?',['cuatro','primero','varios','ese'],1,'«Primero» es un numeral ordinal.'),
   choice('a08','En «alguna respuesta», «alguna» es…',['un artículo','un numeral','un indefinido','un verbo'],2,'Indica una cantidad imprecisa.'),
   multi('a09','Selecciona todos los determinantes demostrativos.',['este','nuestro','aquellos','dos'],[0,2],'«Este» y «aquellos» sitúan elementos a diferente distancia.'),
-  build('a10','Ordena una comparación de superioridad.',['Mi','cometa','es','más','grande','que','el','tuyo.'],'El comparativo de superioridad usa «más… que».')
+  build('a10','Ordena una comparación de superioridad.',['Mi','cometa','es','más','grande','que','el','tuyo.'],'El comparativo de superioridad usa «más… que».'),
+  fill('a11','Completa con un posesivo: «___ cuaderno está aquí».',['Mi','Este','Tres','El'],0,'«Mi» indica posesión y acompaña al nombre.'),
+  build('a12','Ordena una oración con un demostrativo.',['Aquella','estrella','brilla','mucho.'],'«Aquella» señala un elemento lejano.')
  ]},
  {id:'verbos',name:'La torre del tiempo',short:'Pronombres y verbos',icon:'⏳',label:'ZONA 3',color:'#8cbdff',start:'#335fa8',end:'#5440a0',description:'Pronombres personales, conjugaciones, tiempos, formas y modos verbales.',questions:[
   choice('v01','En «Nosotros llegamos temprano», «nosotros» es…',['un nombre','un pronombre personal','un adjetivo','un adverbio'],1,'Sustituye a los nombres de las personas que hablan.'),
@@ -38,7 +43,9 @@ const ZONES=[
   choice('v07','¿Cuál es el lexema de «vivimos»?',['viv-','-imos','-mos','vivimos'],0,'El lexema aporta el significado básico; «-imos» es la desinencia.'),
   choice('v08','En «Ojalá llueva», el verbo está en modo…',['indicativo','subjuntivo','imperativo','infinitivo'],1,'El subjuntivo puede expresar deseos.'),
   multi('v09','Selecciona todos los pronombres personales.',['ella','ellos','su','nos'],[0,1,3],'«Ella», «ellos» y «nos» son pronombres; «su» acompaña a un nombre.'),
-  build('v10','Ordena una oración con verbo en futuro.',['Mañana','visitaremos','el','museo.'],'«Visitaremos» expresa una acción futura.')
+  build('v10','Ordena una oración con verbo en futuro.',['Mañana','visitaremos','el','museo.'],'«Visitaremos» expresa una acción futura.'),
+  fill('v11','Completa con una forma verbal de futuro: «Mañana nosotros ___».',['viajaremos','viajamos ayer','viajar','viajando'],0,'«Viajaremos» corresponde a nosotros y expresa futuro.'),
+  build('v12','Ordena una oración con un pronombre personal.',['Ella','nos','ayudó','ayer.'],'«Ella» y «nos» son pronombres personales.')
  ]},
  {id:'invariables',name:'El portal de los enlaces',short:'Palabras invariables',icon:'🌀',label:'ZONA 4',color:'#eb9dff',start:'#8d3b9b',end:'#344a98',description:'Adverbios, preposiciones, conjunciones e interjecciones.',questions:[
   choice('i01','En «Quizá vengamos», «quizá» es un adverbio de…',['lugar','tiempo','duda','cantidad'],2,'«Quizá» indica posibilidad o duda.'),
@@ -50,7 +57,9 @@ const ZONES=[
   choice('i07','En «Fuimos al parque, pero llovió», «pero» expresa…',['suma','oposición','orden','lugar'],1,'«Pero» es una conjunción adversativa.'),
   choice('i08','En «El libro está encima», «encima» es un adverbio de…',['tiempo','lugar','cantidad','duda'],1,'Indica dónde está el libro.'),
   multi('i09','Selecciona todas las preposiciones.',['hacia','entre','porque','sin'],[0,1,3],'«Hacia», «entre» y «sin» son preposiciones.'),
-  build('i10','Ordena una oración con conjunción adversativa.',['Quería','salir,','pero','empezó','a','llover.'],'«Pero» une dos ideas con oposición.')
+  build('i10','Ordena una oración con conjunción adversativa.',['Quería','salir,','pero','empezó','a','llover.'],'«Pero» une dos ideas con oposición.'),
+  fill('i11','Completa con una conjunción adversativa: «Quise ir, ___ llovía».',['pero','y','o','desde'],0,'«Pero» une dos ideas con oposición.'),
+  build('i12','Ordena una oración con un adverbio de tiempo.',['Ayer','llegamos','muy','temprano.'],'«Ayer» y «temprano» sitúan la acción en el tiempo.')
  ]},
  {id:'final',name:'El dragón de tinta',short:'Batalla final',icon:'🐉',label:'RETO FINAL',color:'#fa85da',start:'#79308f',end:'#273886',description:'Una mezcla de todos los contenidos para demostrar tu dominio.',questions:[
   choice('f01','«Biblioteca» es un nombre…',['abstracto','concreto','colectivo','propio'],1,'Nombra un lugar que puede percibirse.'),
@@ -62,6 +71,8 @@ const ZONES=[
   choice('f07','¿Cuál es un pronombre personal átono?',['mí','conmigo','me','nosotros'],2,'«Me» acompaña a un verbo: «me llamó».'),
   choice('f08','¿Qué nombre es colectivo?',['músico','orquesta','violín','melodía'],1,'«Orquesta» designa un grupo de músicos.'),
   multi('f09','Selecciona todos los adverbios de tiempo.',['hoy','mañana','aquí','ayer'],[0,1,3],'«Hoy», «mañana» y «ayer» indican tiempo.'),
-  build('f10','Ordena una oración con pronombre y verbo compuesto.',['Ella','ha','descubierto','la','respuesta.'],'«Ella» es pronombre personal y «ha descubierto» es forma verbal compuesta.')
+  build('f10','Ordena una oración con pronombre y verbo compuesto.',['Ella','ha','descubierto','la','respuesta.'],'«Ella» es pronombre personal y «ha descubierto» es forma verbal compuesta.'),
+  fill('f11','Completa: «___ libros son nuestros».',['Estos','Ayer','Pero','¡Ay!'],0,'«Estos» es un determinante demostrativo que acompaña a «libros».'),
+  build('f12','Ordena una oración con verbo y adverbio de tiempo.',['Nosotros','leeremos','mañana.'],'«Leeremos» expresa futuro y «mañana» indica tiempo.')
  ]}
 ];
