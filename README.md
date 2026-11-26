@@ -10,9 +10,11 @@ Juego web independiente creado por Teacher MikeSL para practicar gramática de L
 - El portal de los enlaces: adverbios, preposiciones, conjunciones e interjecciones.
 - Batalla final: mezcla de los cuatro bloques.
 
-Cada zona ofrece treinta situaciones por nivel. Aprendiz reduce las opciones y ofrece una pista; Guardián usa cuatro opciones y combina elección, selección múltiple y construcción de oraciones; Maestro añade casos de análisis y penaliza los errores. Las partidas tienen veinte retos por zona y veinticinco en la batalla final.
+Cada zona ofrece treinta situaciones por nivel. Aprendiz reduce las opciones y ofrece una pista; Guardián usa cuatro opciones y combina elección, selección múltiple y construcción de oraciones; Maestro añade casos de análisis y penaliza los errores. Las partidas tienen veinte retos por zona y veinticinco en la batalla final. Las opciones cambian de orden y las respuestas correctas se reparten entre todas las posiciones.
 
-Se puede jugar individualmente, con toda la clase o en una pantalla dividida para dos, tres o cuatro equipos. Cada equipo recibe una pregunta distinta por ronda. Las soluciones y la puntuación de la ronda aparecen cuando todos han respondido. Hay pausas cada cinco retos.
+Antes de jugar cada zona se muestra un resumen breve con ejemplos originales de los contenidos.
+
+Se puede jugar individualmente, con toda la clase o en una pantalla dividida para dos, tres o cuatro equipos. En el modo competitivo, cada equipo recibe preguntas distintas y avanza automáticamente al responder, sin esperar a los demás. Los puntos y las soluciones permanecen ocultos durante el combate; al terminar todos aparece una clasificación ordenada por puntos, con empates compartidos. Se puede pausar desde el control superior. En los modos individual y de clase hay además un punto de control cada cinco retos.
 
 Las estrellas, el récord y los errores pendientes se guardan por nivel mediante `localStorage` en el navegador actual. También se puede reanudar la partida en curso después de recargar la página.
 
